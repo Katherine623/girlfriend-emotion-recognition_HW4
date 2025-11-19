@@ -28,7 +28,7 @@ st.set_page_config(
 )
 
 # 應用程式標題
-st.title("� 女朋友表情辨識器")
+st.title("💕 女朋友表情辨識器")
 st.markdown("### 上傳女朋友的照片，讓AI告訴你她現在的心情，還有貼心小建議！")
 
 # 辨識類別（增加更多表情）
@@ -318,7 +318,7 @@ with tab1:
                     st.text(f"{label}: {percentage:.1f}%")
                 
                 # 根據結果給可愛的建議
-                st.subheader("� 貼心小建議")
+                st.subheader("💝 貼心小建議")
                 
                 # 獲取對應的表情類別
                 emotion_category = categories[max_idx]
@@ -328,7 +328,7 @@ with tab1:
                 if emotion_category == "happy":
                     st.success(f"✨ {suggestion}")
                 elif emotion_category == "angry":
-                    st.error(f"� {suggestion}")
+                    st.error(f"🚨 {suggestion}")
                 elif emotion_category == "sad":
                     st.warning(f"💙 {suggestion}")
                 elif emotion_category == "surprised":
@@ -357,7 +357,7 @@ with tab1:
                         - 📸 拍張美美的照片留念
                         - 🎵 一起聽她喜歡的音樂
                         - 🌟 計劃一個驚喜約會
-                        - � 寫張小卡片表達愛意
+                        - 💌 寫張小卡片表達愛意
                         """)
                     elif emotion_category == "angry":
                         st.markdown("""
@@ -406,7 +406,7 @@ with tab1:
                         - 💋 回應她的愛意
                         - 💑 來個浪漫的約會
                         - 🌹 說些甜蜜的情話
-                        - � 好好珍惜這份愛
+                        - 💖 好好珍惜這份愛
                         """)
                 
                 # 信心度提示
