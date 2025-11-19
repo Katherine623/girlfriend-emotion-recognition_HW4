@@ -5,19 +5,6 @@
 """
 
 import streamlit as st
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow.keras.applications import ResNet50V2
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
-from tensorflow.keras.applications.resnet_v2 import preprocess_input
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.keras.utils import to_categorical
-from PIL import Image
-import os
-import random
 
 # 設定頁面配置
 st.set_page_config(
@@ -25,6 +12,22 @@ st.set_page_config(
     page_icon="😊",
     layout="centered"
 )
+
+# 顯示載入進度
+with st.spinner('🚀 正在載入 AI 模型，首次啟動需要一點時間...'):
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import tensorflow as tf
+    from tensorflow.keras.applications import ResNet50V2
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
+    from tensorflow.keras.applications.resnet_v2 import preprocess_input
+    from tensorflow.keras.preprocessing.image import load_img, img_to_array
+    from tensorflow.keras.utils import to_categorical
+    from PIL import Image
+    import os
+    import random
 
 # 應用程式標題
 st.title("💕 女朋友表情辨識器")
