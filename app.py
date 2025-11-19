@@ -280,145 +280,151 @@ with tab1:
     model_path = "emotion_model.h5"
     
     if os.path.exists(model_path):
-        # 載入模型
-        model = tf.keras.models.load_model(model_path)
-        st.success("✅ 模型已載入！")
+        try:
+            # 載入模型
+            model = tf.keras.models.load_model(model_path)
+            st.success("✅ 模型已載入！")
+        except Exception as e:
+            st.error(f"❌ 模型載入失敗：{str(e)}")
+            st.info("💡 請確認模型檔案完整且格式正確，或嘗試重新訓練模型。")
+            model = None
         
-        # 上傳圖片
-        uploaded_file = st.file_uploader(
-            "選擇一張照片...",
-            type=["jpg", "jpeg", "png"],
-            help="請上傳 JPG、JPEG 或 PNG 格式的照片"
-        )
-        
-        if uploaded_file is not None:
-            # 顯示上傳的圖片
-            image = Image.open(uploaded_file)
-            col1, col2 = st.columns([1, 1])
+        if model is not None:
+            # 上傳圖片
+            uploaded_file = st.file_uploader(
+                "選擇一張照片...",
+                type=["jpg", "jpeg", "png"],
+                help="請上傳 JPG、JPEG 或 PNG 格式的照片"
+            )
             
-            with col1:
-                st.image(image, caption="上傳的照片", use_column_width=True)
-            
-            with col2:
-                # 進行預測
-                with st.spinner("正在分析表情..."):
-                    predictions = predict_emotion(image, model)
+            if uploaded_file is not None:
+                # 顯示上傳的圖片
+                image = Image.open(uploaded_file)
+                col1, col2 = st.columns([1, 1])
                 
-                # 顯示結果
-                st.subheader("分析結果")
+                with col1:
+                    st.image(image, caption="上傳的照片", use_column_width=True)
                 
-                # 找出最高機率的表情
-                max_idx = np.argmax(predictions)
-                confidence = predictions[max_idx] * 100
-                
-                # 用大字體顯示主要結果
-                st.markdown(f"### 她現在的心情是：**{labels[max_idx]}**")
-                st.markdown(f"**信心度：{confidence:.1f}%**")
-                
-                # 顯示所有預測機率
-                st.subheader("詳細分析")
-                for i, (label, prob) in enumerate(zip(labels, predictions)):
-                    percentage = prob * 100
-                    # 確保 prob 是 Python float，而不是 numpy 類型
-                    st.progress(float(prob))
-                    st.text(f"{label}: {percentage:.1f}%")
-                
-                # 根據結果給可愛的建議
-                st.subheader("💝 貼心小建議")
-                
-                # 獲取對應的表情類別
-                emotion_category = categories[max_idx]
-                
-                suggestion = get_llm_suggestion(emotion_category, labels[max_idx], confidence)
-                
-                # 根據不同表情使用不同的顯示風格
-                if emotion_category == "happy":
-                    st.success(f"✨ {suggestion}")
-                elif emotion_category == "angry":
-                    st.error(f"🚨 {suggestion}")
-                elif emotion_category == "sad":
-                    st.warning(f"💙 {suggestion}")
-                elif emotion_category == "surprised":
-                    st.info(f"😲 {suggestion}")
-                elif emotion_category == "tired":
-                    st.info(f"😴 {suggestion}")
-                elif emotion_category == "hungry":
-                    st.success(f"🍽️ {suggestion}")
-                elif emotion_category == "confused":
-                    st.info(f"🤔 {suggestion}")
-                elif emotion_category == "love":
-                    st.success(f"💖 {suggestion}")
-                else:
-                    st.info(f"💕 {suggestion}")
-                
-                # 額外的互動提示
-                with st.expander("💡 更多建議"):
-                    st.markdown(f"""
-                    **基於她現在的心情({labels[max_idx]})，你可以：**
+                with col2:
+                    # 進行預測
+                    with st.spinner("正在分析表情..."):
+                        predictions = predict_emotion(image, model)
                     
-                    """)
+                    # 顯示結果
+                    st.subheader("分析結果")
                     
-                    # 根據不同表情給予額外建議
+                    # 找出最高機率的表情
+                    max_idx = np.argmax(predictions)
+                    confidence = predictions[max_idx] * 100
+                    
+                    # 用大字體顯示主要結果
+                    st.markdown(f"### 她現在的心情是：**{labels[max_idx]}**")
+                    st.markdown(f"**信心度：{confidence:.1f}%**")
+                    
+                    # 顯示所有預測機率
+                    st.subheader("詳細分析")
+                    for i, (label, prob) in enumerate(zip(labels, predictions)):
+                        percentage = prob * 100
+                        # 確保 prob 是 Python float，而不是 numpy 類型
+                        st.progress(float(prob))
+                        st.text(f"{label}: {percentage:.1f}%")
+                    
+                    # 根據結果給可愛的建議
+                    st.subheader("💝 貼心小建議")
+                    
+                    # 獲取對應的表情類別
+                    emotion_category = categories[max_idx]
+                    
+                    suggestion = get_llm_suggestion(emotion_category, labels[max_idx], confidence)
+                    
+                    # 根據不同表情使用不同的顯示風格
                     if emotion_category == "happy":
-                        st.markdown("""
-                        - 📸 拍張美美的照片留念
-                        - 🎵 一起聽她喜歡的音樂
-                        - 🌟 計劃一個驚喜約會
-                        - 💌 寫張小卡片表達愛意
-                        """)
+                        st.success(f"✨ {suggestion}")
                     elif emotion_category == "angry":
-                        st.markdown("""
-                        - 🙏 真誠地道歉
-                        - 👂 耐心聽她說話
-                        - 🎁 準備一個小禮物
-                        - 💐 送她最愛的花
-                        """)
+                        st.error(f"🚨 {suggestion}")
                     elif emotion_category == "sad":
-                        st.markdown("""
-                        - 🫂 給她一個溫暖的擁抱
-                        - 🎬 看一部療癒的電影
-                        - 🍵 泡杯熱茶陪她聊天
-                        - 📝 寫下你對她的愛
-                        """)
+                        st.warning(f"💙 {suggestion}")
                     elif emotion_category == "surprised":
-                        st.markdown("""
-                        - 🎉 確認是好消息還是壞消息
-                        - 💬 關心她發生什麼事
-                        - 🎁 如果是驚喜要假裝不知道
-                        - 📱 隨時準備慶祝或安慰
-                        """)
+                        st.info(f"😲 {suggestion}")
                     elif emotion_category == "tired":
-                        st.markdown("""
-                        - 💆 幫她按摩放鬆
-                        - 🛁 準備舒服的泡澡環境
-                        - 🧘 陪她做簡單的伸展
-                        - 📺 一起看輕鬆的節目
-                        """)
+                        st.info(f"😴 {suggestion}")
                     elif emotion_category == "hungry":
-                        st.markdown("""
-                        - 🍜 煮她最愛的料理
-                        - 🍕 叫她最喜歡的外送
-                        - 🍰 準備小點心和飲料
-                        - 🍽️ 帶她去喜歡的餐廳
-                        """)
+                        st.success(f"🍽️ {suggestion}")
                     elif emotion_category == "confused":
-                        st.markdown("""
-                        - 🗣️ 耐心解釋清楚
-                        - 📊 用圖表或例子說明
-                        - 🤝 一起找出解決方案
-                        - 💡 給她時間慢慢理解
-                        """)
+                        st.info(f"🤔 {suggestion}")
                     elif emotion_category == "love":
-                        st.markdown("""
-                        - 💋 回應她的愛意
-                        - 💑 來個浪漫的約會
-                        - 🌹 說些甜蜜的情話
-                        - 💖 好好珍惜這份愛
+                        st.success(f"💖 {suggestion}")
+                    else:
+                        st.info(f"💕 {suggestion}")
+                    
+                    # 額外的互動提示
+                    with st.expander("💡 更多建議"):
+                        st.markdown(f"""
+                        **基於她現在的心情({labels[max_idx]})，你可以：**
+                        
                         """)
-                
-                # 信心度提示
-                if confidence < 60:
-                    st.warning("⚠️ 信心度較低，建議多觀察她的其他表情或行為喔！")
+                        
+                        # 根據不同表情給予額外建議
+                        if emotion_category == "happy":
+                            st.markdown("""
+                            - 📸 拍張美美的照片留念
+                            - 🎵 一起聽她喜歡的音樂
+                            - 🌟 計劃一個驚喜約會
+                            - 💌 寫張小卡片表達愛意
+                            """)
+                        elif emotion_category == "angry":
+                            st.markdown("""
+                            - 🙏 真誠地道歉
+                            - 👂 耐心聽她說話
+                            - 🎁 準備一個小禮物
+                            - 💐 送她最愛的花
+                            """)
+                        elif emotion_category == "sad":
+                            st.markdown("""
+                            - 🫂 給她一個溫暖的擁抱
+                            - 🎬 看一部療癒的電影
+                            - 🍵 泡杯熱茶陪她聊天
+                            - 📝 寫下你對她的愛
+                            """)
+                        elif emotion_category == "surprised":
+                            st.markdown("""
+                            - 🎉 確認是好消息還是壞消息
+                            - 💬 關心她發生什麼事
+                            - 🎁 如果是驚喜要假裝不知道
+                            - 📱 隨時準備慶祝或安慰
+                            """)
+                        elif emotion_category == "tired":
+                            st.markdown("""
+                            - 💆 幫她按摩放鬆
+                            - 🛁 準備舒服的泡澡環境
+                            - 🧘 陪她做簡單的伸展
+                            - 📺 一起看輕鬆的節目
+                            """)
+                        elif emotion_category == "hungry":
+                            st.markdown("""
+                            - 🍜 煮她最愛的料理
+                            - 🍕 叫她最喜歡的外送
+                            - 🍰 準備小點心和飲料
+                            - 🍽️ 帶她去喜歡的餐廳
+                            """)
+                        elif emotion_category == "confused":
+                            st.markdown("""
+                            - 🗣️ 耐心解釋清楚
+                            - 📊 用圖表或例子說明
+                            - 🤝 一起找出解決方案
+                            - 💡 給她時間慢慢理解
+                            """)
+                        elif emotion_category == "love":
+                            st.markdown("""
+                            - 💋 回應她的愛意
+                            - 💑 來個浪漫的約會
+                            - 🌹 說些甜蜜的情話
+                            - 💖 好好珍惜這份愛
+                            """)
+                    
+                    # 信心度提示
+                    if confidence < 60:
+                        st.warning("⚠️ 信心度較低，建議多觀察她的其他表情或行為喔！")
     else:
         st.warning("⚠️ 尚未訓練模型，請先到「訓練模型」標籤訓練模型。")
         st.info("💡 如果您已經有訓練好的模型，請將 `emotion_model.h5` 放在專案目錄中。")
@@ -466,70 +472,6 @@ with tab2:
         詳細訓練步驟請參考專案文檔。
         """)
     
-    # 只在本地有訓練資料時顯示資料集概況
-    folders_exist = all(os.path.exists(cat) for cat in categories)
-    
-    if folders_exist and not model_exists:
-        st.success("✅ 已找到所有訓練資料夾")
-        
-        # 顯示每個資料夾的圖片數量
-        st.subheader("📊 資料集概況")
-        
-        total_images = 0
-        dataset_info = []
-        
-        for cat, label in zip(categories, labels):
-            if os.path.exists(cat):
-                num_images = len([f for f in os.listdir(cat) if f.lower().endswith(('.jpg', '.jpeg', '.png'))])
-                total_images += num_images
-                dataset_info.append({
-                    '表情': label,
-                    '資料夾': cat,
-                    '照片數': num_images
-                })
-        
-        df = pd.DataFrame(dataset_info)
-        st.dataframe(df, use_container_width=True)
-        
-        st.info(f"📸 總計：{total_images} 張照片")
-        
-        # 資料集品質檢查
-        if total_images < 20:
-            st.error("⚠️ 訓練資料太少！建議至少準備 40 張照片（每類 10 張）以獲得較好的效果。")
-        elif total_images < 40:
-            st.warning("⚠️ 訓練資料偏少。建議每類準備 15-20 張照片以提升準確度。")
-        else:
-            st.success("✅ 訓練資料充足！")
-        
-        # 檢查資料平衡度
-        counts = [item['照片數'] for item in dataset_info]
-        if max(counts) > min(counts) * 2 and min(counts) > 0:
-            st.warning("⚠️ 資料不平衡！某些類別的照片數量差異較大，可能影響訓練效果。")
-        
-        # 顯示樣本圖片（可選）
-        with st.expander("🖼️ 預覽訓練資料"):
-            cols = st.columns(4)
-            for idx, (cat, label) in enumerate(zip(categories, labels)):
-                if os.path.exists(cat):
-                    files = [f for f in os.listdir(cat) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-                    if files:
-                        sample_img_path = os.path.join(cat, files[0])
-                        try:
-                            img = Image.open(sample_img_path)
-                            with cols[idx]:
-                                st.image(img, caption=label, use_column_width=True)
-                        except:
-                            pass
-        
-        st.markdown("---")
-        
-        # 訓練按鈕
-        if total_images >= 12:  # 至少每類3張
-            if st.button("🚀 開始訓練模型", type="primary", use_container_width=True):
-                train_model()
-        else:
-            st.error("❌ 訓練資料不足！請至少在每個資料夾中放入 3 張照片。")
-
 with tab3:
     st.header("關於這個應用")
     
@@ -577,244 +519,6 @@ with tab3:
     **學號**：5114056002  
     **作業**：HW4 - 遷移式學習
     """)
-
-def train_model():
-    """訓練模型的函數 - 完整訓練流程"""
-    st.subheader("🎓 訓練進度")
-    
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    
-    try:
-        # 步驟 1: 載入訓練資料
-        status_text.text("步驟 1/6: 載入訓練資料...")
-        progress_bar.progress(15)
-        
-        data = []
-        target = []
-        
-        for i, category in enumerate(categories):
-            if not os.path.exists(category):
-                st.error(f"❌ 找不到資料夾：{category}")
-                return
-                
-            files = [f for f in os.listdir(category) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-            
-            if len(files) == 0:
-                st.warning(f"⚠️ 資料夾 {category} 中沒有圖片檔案")
-                continue
-                
-            for fname in files:
-                try:
-                    img_path = os.path.join(category, fname)
-                    img = load_img(img_path, target_size=(224, 224))
-                    x = img_to_array(img)
-                    data.append(x)
-                    target.append(i)
-                except Exception as e:
-                    st.warning(f"無法載入圖片 {fname}: {str(e)}")
-                    continue
-        
-        if len(data) == 0:
-            st.error("❌ 沒有找到任何訓練資料！請確認資料夾中有圖片檔案。")
-            return
-            
-        data = np.array(data)
-        target = np.array(target)
-        
-        st.success(f"✅ 成功載入 {len(data)} 張照片")
-        
-        # 顯示資料集資訊
-        info_col1, info_col2 = st.columns(2)
-        with info_col1:
-            st.metric("總圖片數", len(data))
-        with info_col2:
-            st.metric("圖片尺寸", "224x224x3")
-        
-        # 顯示每個類別的數量
-        unique, counts = np.unique(target, return_counts=True)
-        data_dist = pd.DataFrame({
-            '表情': [labels[i] for i in unique],
-            '數量': counts
-        })
-        st.dataframe(data_dist, use_container_width=True)
-        
-        # 步驟 2: 資料預處理
-        status_text.text("步驟 2/6: 資料預處理...")
-        progress_bar.progress(30)
-        
-        # 使用 ResNet50V2 的預處理函數
-        data = preprocess_input(data)
-        
-        # 將標籤轉換為 one-hot encoding
-        target = to_categorical(target, len(categories))
-        
-        st.success("✅ 資料預處理完成")
-        
-        # 步驟 3: 建立模型
-        status_text.text("步驟 3/6: 建立 MobileNetV2 輕量級模型...")
-        progress_bar.progress(45)
-        
-        # 載入預訓練的 MobileNetV2 模型（輕量快速）
-        base_model = MobileNetV2(
-            weights='imagenet',
-            include_top=False,
-            input_shape=(224, 224, 3)
-        )
-        
-        # 凍結基礎模型的權重
-        base_model.trainable = False
-        
-        # 建立完整模型
-        model = Sequential([
-            base_model,
-            GlobalAveragePooling2D(),
-            Dense(256, activation='relu'),
-            Dropout(0.5),
-            Dense(128, activation='relu'),
-            Dropout(0.3),
-            Dense(len(categories), activation='softmax')
-        ])
-        
-        # 編譯模型
-        model.compile(
-            optimizer='adam',
-            loss='categorical_crossentropy',
-            metrics=['accuracy']
-        )
-        
-        st.success("✅ 模型建立完成")
-        
-        # 顯示模型摘要
-        with st.expander("📊 查看模型架構"):
-            # 獲取模型摘要
-            stringlist = []
-            model.summary(print_fn=lambda x: stringlist.append(x))
-            model_summary = "\n".join(stringlist)
-            st.code(model_summary)
-        
-        # 步驟 4: 訓練模型
-        status_text.text("步驟 4/6: 訓練模型（這可能需要幾分鐘）...")
-        progress_bar.progress(60)
-        
-        # 使用 Streamlit 的進度條顯示訓練過程
-        epoch_text = st.empty()
-        metrics_placeholder = st.empty()
-        
-        # 訓練參數
-        epochs = 15
-        batch_size = 8
-        
-        history = model.fit(
-            data, target,
-            epochs=epochs,
-            batch_size=batch_size,
-            validation_split=0.2,
-            verbose=0
-        )
-        
-        progress_bar.progress(80)
-        st.success("✅ 模型訓練完成")
-        
-        # 步驟 5: 顯示訓練結果
-        status_text.text("步驟 5/6: 分析訓練結果...")
-        
-        # 顯示訓練歷史圖表
-        st.subheader("📈 訓練過程")
-        
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
-        
-        # 準確率圖表
-        ax1.plot(history.history['accuracy'], label='訓練準確率', marker='o')
-        ax1.plot(history.history['val_accuracy'], label='驗證準確率', marker='s')
-        ax1.set_title('模型準確率')
-        ax1.set_xlabel('Epoch')
-        ax1.set_ylabel('準確率')
-        ax1.legend()
-        ax1.grid(True, alpha=0.3)
-        
-        # 損失圖表
-        ax2.plot(history.history['loss'], label='訓練損失', marker='o')
-        ax2.plot(history.history['val_loss'], label='驗證損失', marker='s')
-        ax2.set_title('模型損失')
-        ax2.set_xlabel('Epoch')
-        ax2.set_ylabel('損失')
-        ax2.legend()
-        ax2.grid(True, alpha=0.3)
-        
-        plt.tight_layout()
-        st.pyplot(fig)
-        
-        # 步驟 6: 儲存模型
-        status_text.text("步驟 6/6: 儲存模型...")
-        progress_bar.progress(95)
-        
-        model.save("emotion_model.h5")
-        
-        progress_bar.progress(100)
-        status_text.text("✅ 訓練完成！")
-        
-        st.success("🎉 訓練完成！模型已儲存為 emotion_model.h5")
-        
-        # 顯示最終結果
-        st.subheader("📊 訓練結果")
-        
-        final_accuracy = history.history['accuracy'][-1] * 100
-        final_val_accuracy = history.history['val_accuracy'][-1] * 100
-        final_loss = history.history['loss'][-1]
-        final_val_loss = history.history['val_loss'][-1]
-        
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("訓練準確率", f"{final_accuracy:.1f}%")
-        with col2:
-            st.metric("驗證準確率", f"{final_val_accuracy:.1f}%")
-        with col3:
-            st.metric("訓練損失", f"{final_loss:.4f}")
-        with col4:
-            st.metric("驗證損失", f"{final_val_loss:.4f}")
-        
-        # 評估模型品質
-        st.subheader("🎯 模型評估")
-        if final_val_accuracy >= 90:
-            st.success("✨ 優秀！模型表現非常好！")
-        elif final_val_accuracy >= 80:
-            st.info("👍 不錯！模型表現良好！")
-        elif final_val_accuracy >= 70:
-            st.warning("⚠️ 尚可。建議增加訓練資料或調整參數。")
-        else:
-            st.error("❌ 表現不佳。建議增加更多訓練資料。")
-        
-        # 給予建議
-        st.subheader("💡 建議")
-        
-        if final_val_accuracy < final_accuracy - 20:
-            st.warning("⚠️ 檢測到過擬合（Overfitting）！訓練準確率遠高於驗證準確率。\n建議：\n- 增加更多訓練資料\n- 使用資料增強（Data Augmentation）\n- 增加 Dropout 比例")
-        
-        if len(data) < 40:
-            st.info("💡 訓練資料較少，建議每個類別準備至少 15-20 張照片以提升模型準確度。")
-        
-        st.info("💡 現在可以到「辨識表情」標籤測試模型了！")
-        
-        # 儲存訓練歷史
-        history_df = pd.DataFrame(history.history)
-        st.download_button(
-            label="📥 下載訓練歷史資料",
-            data=history_df.to_csv(index=False),
-            file_name="training_history.csv",
-            mime="text/csv"
-        )
-        
-    except Exception as e:
-        st.error(f"❌ 訓練過程發生錯誤：{str(e)}")
-        st.exception(e)
-        st.info("""
-        請確認：
-        - 訓練資料夾存在且包含照片（happy, angry, sad, surprised）
-        - 照片格式正確（JPG/JPEG/PNG）
-        - 每個類別至少有 5 張照片
-        - 系統有足夠的記憶體
-        """)
 
 # 頁尾
 st.markdown("---")
