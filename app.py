@@ -454,25 +454,19 @@ with tab2:
         st.metric("模型大小", f"{model_size:.2f} MB")
         
     else:
-        st.markdown("""
-        ### 📝 訓練步驟
+        st.info("""
+        ### � 模型訓練說明
         
-        1. **準備訓練資料**：
-           - 在專案目錄建立八個資料夾：`happy`、`angry`、`sad`、`surprised`、`tired`、`hungry`、`confused`、`love`
-           - 在每個資料夾中放入對應表情的照片（建議每類 15-20 張）
+        目前模型尚未訓練。如需訓練模型，請在本地環境執行以下步驟：
         
-        2. **開始訓練**：
-           - 點擊下方按鈕開始訓練
-           - 訓練完成後模型會自動儲存為 `emotion_model.h5`
+        1. 準備訓練資料（8 種情緒的照片）
+        2. 執行訓練腳本
+        3. 將生成的 `emotion_model.h5` 上傳到專案
         
-        3. **使用提示**：
-           - 照片建議是正面清晰的臉部照片
-           - 表情越明顯，辨識效果越好
-           - 建議每個類別的照片數量要平衡
-           - 現在支援 8 種表情，訓練時間可能會稍長一些
+        詳細訓練步驟請參考專案文檔。
         """)
     
-    # 檢查資料夾是否存在
+    # 只在本地有訓練資料時顯示資料集概況
     folders_exist = all(os.path.exists(cat) for cat in categories)
     
     if folders_exist and not model_exists:
@@ -535,30 +529,6 @@ with tab2:
                 train_model()
         else:
             st.error("❌ 訓練資料不足！請至少在每個資料夾中放入 3 張照片。")
-    else:
-        st.warning("⚠️ 請先建立訓練資料夾並放入照片")
-        st.code("""
-建立資料夾結構：
-project/
-├── happy/          (放入開心的照片)
-├── angry/          (放入生氣的照片)
-├── sad/            (放入難過的照片)
-├── surprised/      (放入驚訝的照片)
-├── tired/          (放入累了的照片)
-├── hungry/         (放入餓了的照片)
-├── confused/       (放入困惑的照片)
-└── love/           (放入愛你的照片)
-        """)
-        
-        # 提供建立資料夾按鈕
-        if st.button("📁 自動建立資料夾", type="secondary"):
-            try:
-                for cat in categories:
-                    os.makedirs(cat, exist_ok=True)
-                st.success("✅ 資料夾建立完成！請在各資料夾中放入對應的照片。")
-                st.rerun()
-            except Exception as e:
-                st.error(f"❌ 建立資料夾失敗：{str(e)}")
 
 with tab3:
     st.header("關於這個應用")
