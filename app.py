@@ -34,8 +34,8 @@ st.title("💕 女朋友表情辨識器")
 st.markdown("### 上傳女朋友的照片，讓AI告訴你她現在的心情，還有貼心小建議！")
 
 # 辨識類別（增加更多表情）
-categories = ["happy", "angry", "sad", "surprised", "tired", "hungry", "confused", "love"]
-labels = ["開心 😊", "生氣 😠", "難過 😢", "驚訝 😲", "累了 😴", "餓了 😋", "困惑 🤔", "愛你 🥰"]
+categories = ["happy", "angry", "sad", "surprised", "tired", "hungry", "confused"]
+labels = ["開心 😊", "生氣 😠", "難過 😢", "驚訝 😲", "累了 😴", "餓了 😋", "困惑 🤔"]
 
 # 為每種表情準備多個可愛建議
 emotion_suggestions = {
@@ -87,13 +87,6 @@ emotion_suggestions = {
         "她好像霧煞煞的... 耐心一點，陪她一起解決問題！ 🧩",
         "困惑模式啟動！趕快去當她的解說員，順便展現你的聰明才智！ 🤓",
         "她不明白！別再繞圈子了，直接說重點吧～ 💡"
-    ],
-    "love": [
-        "天啊！她正在散發愛的光芒！這是表達愛意的最佳時刻！ 💖",
-        "她看起來充滿愛意～快說『我也愛你』然後給她一個吻！ 💋",
-        "滿滿的愛心眼神！她一定超愛你的！繼續保持這樣下去！ 🥰",
-        "這個眼神～她完全被你迷住了！要好好珍惜她喔！ 💝",
-        "充滿愛的表情！說些浪漫的話，讓她知道你也愛她！ 💕"
     ]
 }
 
@@ -158,7 +151,6 @@ with st.sidebar:
     - 😴 累了
     - 😋 餓了
     - 🤔 困惑
-    - 🥰 愛你
     
     ---
     
@@ -352,8 +344,6 @@ with tab1:
                         st.success(f"🍽️ {suggestion}")
                     elif emotion_category == "confused":
                         st.info(f"🤔 {suggestion}")
-                    elif emotion_category == "love":
-                        st.success(f"💖 {suggestion}")
                     else:
                         st.info(f"💕 {suggestion}")
                     
@@ -414,13 +404,6 @@ with tab1:
                             - 🤝 一起找出解決方案
                             - 💡 給她時間慢慢理解
                             """)
-                        elif emotion_category == "love":
-                            st.markdown("""
-                            - 💋 回應她的愛意
-                            - 💑 來個浪漫的約會
-                            - 🌹 說些甜蜜的情話
-                            - 💖 好好珍惜這份愛
-                            """)
                     
                     # 信心度提示
                     if confidence < 60:
@@ -449,7 +432,7 @@ with tab2:
         
         **模型資訊：**
         - 架構：MobileNetV2（輕量級神經網路）
-        - 訓練類別：8 種情緒
+        - 訓練類別：7 種情緒
         - 模型檔案：emotion_model.h5
         
         💡 如果想重新訓練，請在本地環境執行訓練程序。
@@ -465,8 +448,8 @@ with tab2:
         
         目前模型尚未訓練。如需訓練模型，請在本地環境執行以下步驟：
         
-        1. 準備訓練資料（8 種情緒的照片）
-        2. 執行訓練腳本
+        1. 準備訓練資料（7 種情緒的照片）
+        2. 執行訓練腳本：`python auto_train.py`
         3. 將生成的 `emotion_model.h5` 上傳到專案
         
         詳細訓練步驟請參考專案文檔。
@@ -479,14 +462,14 @@ with tab3:
     ### 🎯 專案簡介
     
     這是一個使用**遷移式學習**（Transfer Learning）技術打造的表情辨識器，
-    能夠辨識女朋友照片中的八種表情。
+    能夠辨識女朋友照片中的七種表情。
     
     ### 🔬 技術說明
     
     - **基礎模型**：MobileNetV2（在 ImageNet 上預訓練，輕量快速）
     - **框架**：TensorFlow/Keras
     - **介面**：Streamlit
-    - **辨識類別**：8 種表情
+    - **辨識類別**：7 種表情
     - **AI 建議**：OpenAI GPT-3.5（選用）
     
     ### 📊 模型架構
@@ -498,7 +481,7 @@ with tab3:
     ↓
     Dense(128, ReLU)
     ↓
-    Dense(8, Softmax)
+    Dense(7, Softmax)
     ```
     
     ### 💡 使用建議

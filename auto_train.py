@@ -9,7 +9,7 @@ import keras
 from PIL import Image
 import sys
 
-categories = ["happy", "angry", "sad", "surprised", "tired", "hungry", "confused", "love"]
+categories = ["happy", "angry", "sad", "surprised", "tired", "hungry", "confused"]
 
 print("=" * 60)
 print("  女朋友表情辨識器 - 自動訓練腳本")
