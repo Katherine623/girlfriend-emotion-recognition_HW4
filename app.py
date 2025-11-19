@@ -457,28 +457,56 @@ with tab1:
 with tab2:
     st.header("訓練表情辨識模型")
     
-    st.markdown("""
-    ### 📝 訓練步驟
+    # 檢查是否已有訓練好的模型
+    model_exists = os.path.exists("emotion_model.h5")
     
-    1. **準備訓練資料**：
-       - 在專案目錄建立八個資料夾：`happy`、`angry`、`sad`、`surprised`、`tired`、`hungry`、`confused`、`love`
-       - 在每個資料夾中放入對應表情的照片（建議每類 15-20 張）
-    
-    2. **開始訓練**：
-       - 點擊下方按鈕開始訓練
-       - 訓練完成後模型會自動儲存為 `emotion_model.h5`
-    
-    3. **使用提示**：
-       - 照片建議是正面清晰的臉部照片
-       - 表情越明顯，辨識效果越好
-       - 建議每個類別的照片數量要平衡
-       - 現在支援 8 種表情，訓練時間可能會稍長一些
-    """)
+    if model_exists:
+        st.success("✅ 模型已就緒！")
+        st.info("""
+        ### 🎉 模型已訓練完成
+        
+        您的情緒識別模型已經訓練好並可以使用了！
+        
+        **使用方式：**
+        1. 前往「🎯 辨識表情」標籤
+        2. 上傳照片開始識別
+        3. 查看 AI 分析結果和建議
+        
+        **模型資訊：**
+        - 架構：MobileNetV2（輕量級神經網路）
+        - 訓練類別：8 種情緒
+        - 模型檔案：emotion_model.h5
+        
+        💡 如果想重新訓練，請在本地環境執行訓練程序。
+        """)
+        
+        # 顯示模型檔案資訊
+        model_size = os.path.getsize("emotion_model.h5") / 1024 / 1024
+        st.metric("模型大小", f"{model_size:.2f} MB")
+        
+    else:
+        st.markdown("""
+        ### 📝 訓練步驟
+        
+        1. **準備訓練資料**：
+           - 在專案目錄建立八個資料夾：`happy`、`angry`、`sad`、`surprised`、`tired`、`hungry`、`confused`、`love`
+           - 在每個資料夾中放入對應表情的照片（建議每類 15-20 張）
+        
+        2. **開始訓練**：
+           - 點擊下方按鈕開始訓練
+           - 訓練完成後模型會自動儲存為 `emotion_model.h5`
+        
+        3. **使用提示**：
+           - 照片建議是正面清晰的臉部照片
+           - 表情越明顯，辨識效果越好
+           - 建議每個類別的照片數量要平衡
+           - 現在支援 8 種表情，訓練時間可能會稍長一些
+        """)
     
     # 檢查資料夾是否存在
     folders_exist = all(os.path.exists(cat) for cat in categories)
     
-    if folders_exist:
+    if folders_exist and not model_exists:
         st.success("✅ 已找到所有訓練資料夾")
         
         # 顯示每個資料夾的圖片數量
