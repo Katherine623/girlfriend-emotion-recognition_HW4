@@ -343,7 +343,8 @@ with tab1:
                 st.subheader("詳細分析")
                 for i, (label, prob) in enumerate(zip(labels, predictions)):
                     percentage = prob * 100
-                    st.progress(prob)
+                    # 確保 prob 是 Python float，而不是 numpy 類型
+                    st.progress(float(prob))
                     st.text(f"{label}: {percentage:.1f}%")
                 
                 # 根據結果給可愛的建議
