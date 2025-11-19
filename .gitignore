@@ -1,0 +1,86 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# 訓練資料（太大不上傳）
+happy/*.jpg
+happy/*.jpeg
+happy/*.png
+angry/*.jpg
+angry/*.jpeg
+angry/*.png
+sad/*.jpg
+sad/*.jpeg
+sad/*.png
+surprised/*.jpg
+surprised/*.jpeg
+surprised/*.png
+tired/*.jpg
+tired/*.jpeg
+tired/*.png
+hungry/*.jpg
+hungry/*.jpeg
+hungry/*.png
+confused/*.jpg
+confused/*.jpeg
+confused/*.png
+love/*.jpg
+love/*.jpeg
+love/*.png
+
+# 但保留資料夾結構
+!happy/.gitkeep
+!angry/.gitkeep
+!sad/.gitkeep
+!surprised/.gitkeep
+!tired/.gitkeep
+!hungry/.gitkeep
+!confused/.gitkeep
+!love/.gitkeep
+
+# 模型檔案（可選：如果模型太大可以不上傳）
+# emotion_model.h5
+
+# 測試圖片
+test_images/
+
+# 其他
+*.log
+.env
