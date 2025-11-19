@@ -199,6 +199,9 @@ with st.sidebar:
 # 獲取建議的函數
 def get_suggestion(emotion_category):
     """根據表情類別隨機返回一個可愛的建議"""
+    import time
+    # 使用時間戳記確保真正隨機
+    random.seed(time.time())
     suggestions = emotion_suggestions.get(emotion_category, ["繼續關心她，你會做得很好的！💕"])
     return random.choice(suggestions)
 
