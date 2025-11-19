@@ -322,7 +322,7 @@ with tab1:
                 
                 # 獲取對應的表情類別
                 emotion_category = categories[max_idx]
-                suggestion = get_suggestion(emotion_category)
+                suggestion = get_llm_suggestion(emotion_category, labels[max_idx], confidence)
                 
                 # 根據不同表情使用不同的顯示風格
                 if emotion_category == "happy":
