@@ -276,11 +276,28 @@ with tab1:
     # 檢查是否有訓練好的模型
     model_path = "emotion_model.h5"
     
+    # 添加展示模式選項
+    st.markdown("---")
+    demo_mode = st.checkbox("🎭 啟用展示模式（無需訓練模型）", value=False, 
+                            help="展示模式會使用隨機預測來演示應用功能")
+    st.markdown("---")
+    
     if os.path.exists(model_path):
         # 載入模型
         model = tf.keras.models.load_model(model_path)
         st.success("✅ 模型已載入！")
+        demo_mode = False  # 有模型時關閉展示模式
         
+    elif not demo_mode:
+        st.warning("⚠️ 尚未訓練模型，請先到「訓練模型」標籤訓練模型。")
+        st.info("💡 如果您已經有訓練好的模型，請將 `emotion_model.h5` 放在專案目錄中。")
+        st.info("🎭 或者勾選上方的「展示模式」來體驗應用功能。")
+        model = None
+    else:
+        st.info("🎭 **展示模式已啟用** - 將使用模擬預測來演示功能")
+        model = None
+    
+    if model is not None or demo_mode:
         # 上傳圖片
         uploaded_file = st.file_uploader(
             "選擇一張照片...",
@@ -299,7 +316,17 @@ with tab1:
             with col2:
                 # 進行預測
                 with st.spinner("正在分析表情..."):
-                    predictions = predict_emotion(image, model)
+                    if demo_mode:
+                        # 展示模式：使用隨機但看起來合理的預測
+                        import random
+                        predictions = np.array([random.random() for _ in labels])
+                        predictions = predictions / predictions.sum()  # 歸一化
+                        # 讓某個情緒佔主導（更真實）
+                        dominant_idx = random.randint(0, len(labels)-1)
+                        predictions[dominant_idx] = predictions[dominant_idx] * 3
+                        predictions = predictions / predictions.sum()
+                    else:
+                        predictions = predict_emotion(image, model)
                 
                 # 顯示結果
                 st.subheader("分析結果")
@@ -324,6 +351,11 @@ with tab1:
                 
                 # 獲取對應的表情類別
                 emotion_category = categories[max_idx]
+                
+                # 在展示模式下顯示提示
+                if demo_mode:
+                    st.info("🎭 這是展示模式的模擬結果，實際使用時請訓練模型以獲得準確預測")
+                
                 suggestion = get_llm_suggestion(emotion_category, labels[max_idx], confidence)
                 
                 # 根據不同表情使用不同的顯示風格
