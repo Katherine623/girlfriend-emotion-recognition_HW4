@@ -61,9 +61,6 @@ hungry/*.png
 confused/*.jpg
 confused/*.jpeg
 confused/*.png
-love/*.jpg
-love/*.jpeg
-love/*.png
 
 # 但保留資料夾結構
 !happy/.gitkeep
@@ -73,7 +70,6 @@ love/*.png
 !tired/.gitkeep
 !hungry/.gitkeep
 !confused/.gitkeep
-!love/.gitkeep
 
 # 模型檔案（可選：如果模型太大可以不上傳）
 # emotion_model.h5
