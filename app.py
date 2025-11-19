@@ -14,15 +14,15 @@ st.set_page_config(
 )
 
 # 顯示載入進度
-with st.spinner('🚀 正在載入 AI 模型，首次啟動需要一點時間...'):
+with st.spinner('🚀 正在載入 AI 模型...'):
     import numpy as np
     import pandas as pd
     import matplotlib.pyplot as plt
     import tensorflow as tf
-    from tensorflow.keras.applications import ResNet50V2
+    from tensorflow.keras.applications import MobileNetV2  # 改用輕量級模型
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
-    from tensorflow.keras.applications.resnet_v2 import preprocess_input
+    from tensorflow.keras.applications.mobilenet_v2 import preprocess_input  # 對應的預處理
     from tensorflow.keras.preprocessing.image import load_img, img_to_array
     from tensorflow.keras.utils import to_categorical
     from PIL import Image
@@ -100,8 +100,8 @@ emotion_suggestions = {
 # 建立模型函數
 @st.cache_resource
 def create_model():
-    """創建並載入預訓練模型"""
-    base_model = ResNet50V2(
+    """創建並載入預訓練模型 - 使用 MobileNetV2 輕量級模型"""
+    base_model = MobileNetV2(
         weights='imagenet',
         include_top=False,
         input_shape=(224, 224, 3)
@@ -534,25 +534,26 @@ with tab3:
     ### 🎯 專案簡介
     
     這是一個使用**遷移式學習**（Transfer Learning）技術打造的表情辨識器，
-    能夠辨識女朋友照片中的四種基本表情：開心、生氣、難過、驚訝。
+    能夠辨識女朋友照片中的八種表情。
     
     ### 🔬 技術說明
     
-    - **基礎模型**：ResNet50V2（在 ImageNet 上預訓練）
+    - **基礎模型**：MobileNetV2（在 ImageNet 上預訓練，輕量快速）
     - **框架**：TensorFlow/Keras
     - **介面**：Streamlit
-    - **辨識類別**：4 種表情
+    - **辨識類別**：8 種表情
+    - **AI 建議**：OpenAI GPT-3.5（選用）
     
     ### 📊 模型架構
     
     ```
-    ResNet50V2 (預訓練)
+    MobileNetV2 (預訓練，輕量級)
     ↓
     GlobalAveragePooling2D
     ↓
     Dense(128, ReLU)
     ↓
-    Dense(4, Softmax)
+    Dense(8, Softmax)
     ```
     
     ### 💡 使用建議
@@ -648,11 +649,11 @@ def train_model():
         st.success("✅ 資料預處理完成")
         
         # 步驟 3: 建立模型
-        status_text.text("步驟 3/6: 建立 ResNet50V2 模型...")
+        status_text.text("步驟 3/6: 建立 MobileNetV2 輕量級模型...")
         progress_bar.progress(45)
         
-        # 載入預訓練的 ResNet50V2 模型
-        base_model = ResNet50V2(
+        # 載入預訓練的 MobileNetV2 模型（輕量快速）
+        base_model = MobileNetV2(
             weights='imagenet',
             include_top=False,
             input_shape=(224, 224, 3)
