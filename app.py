@@ -17,7 +17,6 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.utils import to_categorical
 from PIL import Image
 import os
-import io
 import random
 
 # 設定頁面配置
