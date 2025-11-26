@@ -164,6 +164,7 @@ python auto_train.py
 - **作業編號**：HW4
 - **主題**：遷移式學習 - 女朋友表情辨識器
 - **技術重點**：Transfer Learning, MobileNetV2, Streamlit
+- **靈感來源**：[遷移式學習做八哥辨識器](https://github.com/yenlung/AI-Demo/blob/master/%E3%80%90Demo02%E3%80%91%E9%81%B7%E7%A7%BB%E5%BC%8F%E5%AD%B8%E7%BF%92%E5%81%9A%E5%85%AB%E5%93%A5%E8%BE%A8%E8%AD%98%E5%99%A8.ipynb) by yenlung
 
 ## 📊 模型效能
 
